@@ -3,7 +3,10 @@ import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-const BASE_URL = "https://blinkchatapp-5x02.onrender.com";
+const BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://blinkchatapp-5x02.onrender.com";
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,

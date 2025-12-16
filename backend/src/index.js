@@ -21,7 +21,10 @@ const PORT = process.env.PORT
 app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser())
 app.use(cors({
-  origin: "https://blinkchat-hymo.onrender.com",
+  origin: [
+    "http://localhost:5173",
+    "https://blinkchat-hymo.onrender.com"
+  ],
   credentials: true
 }
 ))
@@ -36,7 +39,10 @@ const server = http.createServer(app);
 //Creating Socket.io server
 const io = new Server(server, {
   cors: {
-    origin: "https://blinkchat-hymo.onrender.com",
+    origin: [
+      "http://localhost:5173",
+      "https://blinkchat-hymo.onrender.com"
+    ],
     credentials: true
   }
 });
