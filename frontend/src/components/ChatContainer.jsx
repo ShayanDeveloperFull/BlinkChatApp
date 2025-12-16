@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useChatStore } from "../store/useChatStore";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
@@ -17,6 +17,11 @@ export default function ChatContainer() {
   } = useChatStore();
 
   const { authUser } = useAuthStore();
+  const messageEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messageEndRef.current?.scrollIntoView({ behavior: "auto" });
+  };
 
   useEffect(() => {
     getMessages(selectedUser._id);
@@ -31,6 +36,10 @@ export default function ChatContainer() {
       unsubscribeFromMessages();
     };
   }, [selectedUser]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   if (isMessagesLoading)
     return (
@@ -82,6 +91,7 @@ export default function ChatContainer() {
             </div>
           </div>
         ))}
+        <div ref={messageEndRef} />
       </div>
 
       <MessageInput />
