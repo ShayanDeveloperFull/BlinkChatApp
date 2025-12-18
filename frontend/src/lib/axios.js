@@ -7,14 +7,3 @@ export const axiosInstance = axios.create({
       : "https://blinkchatapp-5x02.onrender.com/api",
   withCredentials: true,
 });
-
-axiosInstance.interceptors.request.use((config) => {
-  const storedUser = localStorage.getItem("authUser");
-  if (storedUser) {
-    const user = JSON.parse(storedUser);
-    if (user.token) {
-      config.headers.Authorization = `Bearer ${user.token}`;
-    }
-  }
-  return config;
-});
