@@ -1,41 +1,31 @@
-import jwt from "jsonwebtoken";
-
-const onlineUsers = {};
+const onlineUsers = {}
 
 export const getRecieverSocketId = (userId) => {
   return onlineUsers[userId];
-};
+}
 
 export default function setupSocket(io) {
-  io.use((socket, next) => {
-    try {
-      const token = socket.handshake.auth?.token;
-
-      if (!token) {
-        return next(new Error("No token provided"));
-      }
-
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      socket.userId = decoded.userId;
-
-      next();
-    } catch (error) {
-      return next(new Error("Invalid token"));
-    }
-  });
-
   io.on("connection", (socket) => {
-    const userId = socket.userId;
-
+    const userId = socket.handshake.query.userId
     console.log("User connected:", userId, "socket:", socket.id);
 
-    onlineUsers[userId] = socket.id;
+    if (userId) {
+      onlineUsers[userId] = socket.id
+      console.log(onlineUsers);
+    }
+
     io.emit("onlineUsers", Object.keys(onlineUsers));
 
     socket.on("disconnect", () => {
-      delete onlineUsers[userId];
 
-      console.log("User disconnected:", userId);
+      for (const x in onlineUsers) {
+        if (onlineUsers[x] === socket.id) {
+          delete onlineUsers[x];
+          break;
+        }
+      }
+
+      console.log("A user disconnected", socket.id);
       console.log("Online Users:", onlineUsers);
 
       io.emit("onlineUsers", Object.keys(onlineUsers));
